@@ -37,15 +37,15 @@ getCountryData('france');
 const renderCountry = function (data, className = '') {
   const html = `
     <article class="country ${className}">
-      <img class="country__img" src="${data.flags.png}" />
+      <img class="country__img" src="${data.flags?.png}" />
       <div class="country__data">
-        <h3 class="country__name">${data.name.common}</h3>
+        <h3 class="country__name">${data.name?.common}</h3>
         <h4 class="country__region">${data.region}</h4>
         <p class="country__row"><span>👫</span>${(
           +data.population / 1000000
         ).toFixed(1)}M people</p>
-        <p class="country__row"><span>🗣️</span>${data.languages.fra}</p>
-        <p class="country__row"><span>💰</span>${data.currencies.EUR.name}</p>
+        <p class="country__row"><span>🗣️</span>${data.languages?.fra}</p>
+        <p class="country__row"><span>💰</span>${data.currencies?.EUR.name}</p>
       </div>
     </article>
     `;
@@ -55,12 +55,20 @@ const renderCountry = function (data, className = '') {
 
 //Fetch API & promises
 const getCountryDatas = function (country) {
+  //country 1
   fetch(`https://restcountries.com/v3.1/name/${country}`)
     .then(response => response.json())
     .then(data => {
       renderCountry(data[0]);
-      console.log(data);
-    });
+      const neigbor = data[0].borders?.[0];
+
+      if (!neigbor) return;
+
+      //country 2
+      return fetch(`https://restcountries.com/v3.1/alpha/${neigbor}`);
+    })
+    .then(response => response.json())
+    .then(data => renderCountry(data, 'neigbor'));
 };
 
-getCountryDatas('france');
+getCountryDatas('greece');
