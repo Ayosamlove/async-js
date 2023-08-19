@@ -181,10 +181,16 @@ createImage('img/img-1.jpg')
 
 //async / await promise
 const whereAreWe = async function (country) {
-  const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
-  const data = await res.json();
-  console.log(data);
-  renderCountry(data[0]);
+  try {
+    const res = await fetch(`https://restcountries.com/v3.1/name/${country}`);
+    if (!res.ok) throw new Error(`Problem getting country`);
+    const data = await res.json();
+    console.log(data);
+    renderCountry(data[0]);
+  } catch (err) {
+    console.error(err);
+    renderError(`Something went wrong ${err.message}`);
+  }
 };
 
 whereAreWe('france');
